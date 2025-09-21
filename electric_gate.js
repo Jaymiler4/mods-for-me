@@ -1,36 +1,42 @@
-let gateColor = "#4a90e2"; // closed gate color
-let openGateColor = "#a0d8ef"; // open gate color
+let gateColor = "#4a90e2";
+let openGateColor = "#a0d8ef";
 
 elements.gate = {
-  color: gateColor,
-  behavior: behaviors.WALL, // solid when closed
-  category: "machines",
-  insulate: true,
-  conduct: 1,
-  properties: {
-    open: false, // start closed
-  },
-  tick: function (pixel) {
-    // if powered, open the gate
-    if (pixel.charge) {
-      if (!pixel.open) {
-        pixel.open = true;
-        pixel.color = openGateColor;
-        pixel.behavior = behaviors.POWDER; // acts like empty space when open
-      }
+    color: gateColor,
+    behavior: behaviors.WALL,
+    category: "machines",
+    insulate: true,
+    conduct: 1,
+    properties: {
+        open: false,
+    },
+    temp: 20,
+    tempHigh: 1000,
+    stateHigh: "molten_metal",
+    density: 5000,
+    hardness: 0.8,
+    state: "solid",
+    
+    tick: function(pixel) {
+        // Handle overheating
+        if (pixel.temp > 1000) return;
+        
+        const shouldBeOpen = !!pixel.charge;
+        
+        // Only update if state actually changed
+        if (shouldBeOpen !== pixel.open) {
+            pixel.open = shouldBeOpen;
+            pixel.color = shouldBeOpen ? openGateColor : gateColor;
+            pixel.behavior = shouldBeOpen ? behaviors.POWDER : behaviors.WALL;
+        }
+        
+        // Safe defaults handling
+        if (typeof doDefaults === "function") {
+            try {
+                doDefaults(pixel);
+            } catch (e) {
+                // Ignore errors
+            }
+        }
     }
-    // if unpowered, close the gate
-    else {
-      if (pixel.open) {
-        pixel.open = false;
-        pixel.color = gateColor;
-        pixel.behavior = behaviors.WALL; // solid again when closed
-      }
-    }
-
-    doDefaults(pixel);
-  },
-  density: 5000,
-  hardness: 0.8,
-  state: "solid",
 };
