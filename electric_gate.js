@@ -1,7 +1,7 @@
-let gateColor = "#4a90e2"; // default gate color
-let openGateColor = "#a0d8ef"; // lighter color when open
+let gateColor = "#4a90e2"; // closed gate color
+let openGateColor = "#a0d8ef"; // open gate color
 
-elements.electric_gate = {
+elements.gate = {
   color: gateColor,
   behavior: behaviors.WALL, // solid when closed
   category: "machines",
@@ -16,15 +16,15 @@ elements.electric_gate = {
       if (!pixel.open) {
         pixel.open = true;
         pixel.color = openGateColor;
-        pixel.behavior = behaviors.POWDER; // act like empty space so things can pass through
+        pixel.behavior = behaviors.POWDER; // acts like empty space when open
       }
     }
-    // if not powered, close the gate
+    // if unpowered, close the gate
     else {
       if (pixel.open) {
         pixel.open = false;
         pixel.color = gateColor;
-        pixel.behavior = behaviors.WALL; // back to solid
+        pixel.behavior = behaviors.WALL; // solid again when closed
       }
     }
 
